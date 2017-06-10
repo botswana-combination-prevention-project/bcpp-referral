@@ -1,35 +1,17 @@
-from django.db import models
-from django.test import TestCase
+from datetime import datetime
+from django.test import TestCase, tag
 
-from edc_constants.constants import MALE
-from edc_base.model_mixins.base_uuid_model import BaseUuidModel
-from edc_appointment.models import Appointment
+from edc_constants.constants import MALE, YES
+from edc_registration.models import RegisteredSubject
 
-from ..referral import DataHelper, Referral
+from bcpp_status import StatusHelper
 
-
-class SubjectVisit(BaseUuidModel):
-
-    appointment = models.ForeignKey(Appointment)
-
-    subject_identifier = models.CharField(max_length=25)
-
-
-class SubjectHelper:
-    def __init__(self, subject_visit=None):
-        self.subject_visit = subject_visit
+from ..data_helpers import DataHelper, ReferralDataError, MaleDataHelper, FemaleDataHelper
+from ..referral import Referral
+from .models import SubjectVisit, SubjectReferral, ReproductiveHealth, HivCareAdherence, PimaCd4
 
 
 class TestReferral(TestCase):
-
-    def test_data_helper(self):
-        data_helper = DataHelper()
-        self.assertEqual(data_helper.gender, None)
-        self.assertEqual(data_helper.subject_visit, None)
-        self.assertEqual(data_helper.subject_identifier, None)
-        self.assertEqual(data_helper.cd4_result, None)
-        self.assertEqual(data_helper.cd4_result_datetime, None)
-        self.assertEqual(data_helper.scheduled_appt_date, None)
 
     def test_referral(self):
         subject_identifier = '111111'
@@ -38,4 +20,4 @@ class TestReferral(TestCase):
         Referral(
             gender=gender,
             subject_visit=subject_visit,
-            subject_helper_cls=SubjectHelper)
+            status_helper_cls=StatusHelper)

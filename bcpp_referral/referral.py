@@ -18,51 +18,6 @@ class ReferralError(Exception):
     pass
 
 
-class DataHelper:
-
-    def __init__(self, subject_visit=None, gender=None, **kwargs):
-        self.gender = gender
-        self.subject_visit = subject_visit
-        self.subject_identifier = subject_visit.subject_identifier
-        try:
-            pima_cd4 = self.subject_visit.pimacd4
-        except ObjectDoesNotExist:
-            self.cd4_result = None
-            self.cd4_result_datetime = None
-        else:
-            self.cd4_result = pima_cd4.result_value
-            self.cd4_result_datetime = pima_cd4.result_datetime
-        try:
-            hiv_care_adherence = self.subject_visit.hivcareadherence
-        except ObjectDoesNotExist:
-            try:
-                subject_referral = subject_visit.subjectreferral
-            except ObjectDoesNotExist:
-                self.scheduled_appt_date = None
-            else:
-                self.scheduled_appt_date = subject_referral.scheduled_appt_date
-        else:
-            self.scheduled_appt_date = hiv_care_adherence.next_appointment_date
-
-
-class MaleDataHelper(DataHelper):
-    def __init__(self, circumcised=None, **kwargs):
-        super().__init__(**kwargs)
-        self.circumcised = circumcised
-
-
-class FemaleDataHelper(DataHelper):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        try:
-            reproductive_health = self.subject_visit.reproductivehealth
-        except ObjectDoesNotExist:
-            self.pregnant = None
-        else:
-            self.pregnant = (
-                True if reproductive_health.currently_pregnant == YES else False)
-
-
 class Referral:
     """A class that calculates the referral code or returns
     a blank string.
@@ -71,10 +26,11 @@ class Referral:
     referral_appt_cls = ReferralAppt
     referral_code_cls = ReferralCode
 
-    def __init__(self, subject_status_cls=None, data_helper_cls=None, **kwargs):
+    def __init__(self, status_helper_cls=None, data_helper_cls=None, **kwargs):
         self.data_helper = data_helper_cls(**kwargs)
         self.subject_visit = self.data_helper.subject_visit
-        self.subject_status = subject_status_cls(self.subject_visit)
+        self.subject_status = status_helper_cls(
+            subject_visit=self.subject_visit)
         self.subject_identifier = self.data_helper.subject_identifier
 
         self.referral_code = self.referral_code_cls(**kwargs).referral_code
