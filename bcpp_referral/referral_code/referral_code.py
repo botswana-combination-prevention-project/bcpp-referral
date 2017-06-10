@@ -9,6 +9,11 @@ from .referral_code_untested import ReferralCodeUntested
 
 class ReferralCode:
 
+    """A class to determine the referral code based on criteria
+    such as gender, hiv_status, arv_status, circumcision,
+    pregnancy, etc.
+    """
+
     referral_code_untested_cls = ReferralCodeUntested
     referral_code_tested_cls = ReferralCodeTested
     valid_hiv_status = [POS, NEG, IND, UNK, None]
@@ -19,6 +24,7 @@ class ReferralCode:
     def __init__(self, gender=None, circumcised=None, pregnant=None,
                  status_helper=None, cd4_result=None, **kwargs):
         self.referral_code = None
+
         if status_helper.final_hiv_status not in self.valid_hiv_status:
             raise ReferralCodeError(
                 f'Invalid HIV status. Got {status_helper.final_hiv_status}. '

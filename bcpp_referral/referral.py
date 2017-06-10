@@ -1,14 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
-
-from edc_constants.constants import POS, NEG, MALE, FEMALE, NAIVE, YES, UNK
-# from edc_map.site_mappers import site_mappers
 from edc_metadata.models import CrfMetadata
 from edc_metadata.constants import REQUIRED, KEYED
 
-
-# from ..models import ReproductiveHealth, is_circumcised, HivCareAdherence
-# from ..subject_helper import SubjectHelper, ON_ART, DEFAULTER
-from .choices import REFERRAL_CODES
 from .constants import URGENT_REFERRALS
 from .referral_appt import ReferralAppt
 from .referral_code import ReferralCode

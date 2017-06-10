@@ -6,6 +6,7 @@ from edc_registration.models import RegisteredSubject
 
 from ..data_helpers import DataHelper, ReferralDataError, MaleDataHelper, FemaleDataHelper
 from .models import SubjectVisit, SubjectReferral, ReproductiveHealth, HivCareAdherence, PimaCd4
+from pprint import pprint
 
 
 class TestDataHelper(TestCase):
@@ -60,6 +61,7 @@ class TestDataHelper(TestCase):
         SubjectReferral(subject_visit=self.subject_visit,
                         scheduled_appt_date=referral_dt)
         data_helper = DataHelper(subject_visit=self.subject_visit)
+        pprint(data_helper.options)
         self.assertEqual(data_helper.scheduled_appt_date, referral_dt)
 
     def test_data_helper_appt_date_from_hivcareadherence(self):

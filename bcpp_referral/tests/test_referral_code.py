@@ -33,43 +33,36 @@ class MockStatusHelper:
 
 class TestReferralCodeUntested(TestCase):
 
-    @tag('1')
     def test_referral_code_untested(self):
         code = ReferralCodeUntested()
         self.assertIsNone(code.referral_code)
 
-    @tag('1')
     def test_referral_code_untested_repr(self):
         code = ReferralCodeUntested()
         self.assertTrue(repr(code))
 
-    @tag('1')
     def test_referral_code(self):
         status_helper = MockStatusHelper()
         code = ReferralCode(status_helper=status_helper)
         self.assertIsNone(code.referral_code)
 
-    @tag('1')
     def test_referral_invalid_hiv_status(self):
         status_helper = MockStatusHelper(final_hiv_status='BLAH')
         self.assertRaises(
             ReferralCodeError,
             ReferralCode, status_helper=status_helper)
 
-    @tag('1')
     def test_referral_invalid_arv_status(self):
         status_helper = MockStatusHelper(final_arv_status='BLAH')
         self.assertRaises(
             ReferralCodeError,
             ReferralCode, status_helper=status_helper)
 
-    @tag('1')
     def test_referral_hivnone(self):
         status_helper = MockStatusHelper(final_hiv_status=None)
         code = ReferralCode(status_helper=status_helper, gender=FEMALE)
         self.assertEqual(code.referral_code, 'TST-HIV')
 
-    @tag('1')
     def test_referral_hivind(self):
         status_helper = MockStatusHelper(final_hiv_status=IND)
         for gender in [MALE, FEMALE]:
@@ -77,21 +70,18 @@ class TestReferralCodeUntested(TestCase):
                 code = ReferralCode(status_helper=status_helper, gender=gender)
                 self.assertEqual(code.referral_code, 'TST-IND')
 
-    @tag('1')
     def test_referral_code_hivpos_on_art(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=ON_ART)
         code = ReferralCode(status_helper=status_helper)
         self.assertEqual(code.referral_code, 'MASA-CC')
 
-    @tag('1')
     def test_referral_code_hivpos_defaulter(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=DEFAULTER)
         code = ReferralCode(status_helper=status_helper)
         self.assertEqual(code.referral_code, 'MASA-DF')
 
-    @tag('1')
     def test_referral_code_male_hivunknown_uncircumcised(self):
         for final_hiv_status in [UNK, None]:
             with self.subTest(final_hiv_status=final_hiv_status):
@@ -103,7 +93,6 @@ class TestReferralCodeUntested(TestCase):
                                             gender=MALE, circumcised=circumcised)
                         self.assertEqual(code.referral_code, 'SMC-UNK')
 
-    @tag('1')
     def test_referral_code_male_declined(self):
         """Asserts male NEG/UNK who declines and not circumcised/UNKNOWN
         returns 'SMC-UNK'.
@@ -118,14 +107,12 @@ class TestReferralCodeUntested(TestCase):
                                             gender=MALE, circumcised=circumcised)
                         self.assertEqual(code.referral_code, 'SMC-UNK')
 
-    @tag('1')
     def test_referral_code_male_declined_circumcised(self):
         status_helper = MockStatusHelper(final_hiv_status=NEG, declined=True)
         code = ReferralCode(status_helper=status_helper,
                             gender=MALE, circumcised=True)
         self.assertEqual(code.referral_code, 'TST-HIV')
 
-    @tag('1')
     def test_referral_code_female_declined_not_pregnant(self):
         """Asserts female NEG/UNK who declines and not pregnant/UNKNOWN
         returns 'TST-HIV'.
@@ -140,28 +127,24 @@ class TestReferralCodeUntested(TestCase):
                                             gender=FEMALE, pregnant=pregnant)
                         self.assertEqual(code.referral_code, 'TST-HIV')
 
-    @tag('1')
     def test_referral_code_female_hivneg_pregnant(self):
         status_helper = MockStatusHelper(final_hiv_status=NEG)
         code = ReferralCode(status_helper=status_helper,
                             gender=FEMALE, pregnant=True)
         self.assertEqual(code.referral_code, 'NEG!-PR')
 
-    @tag('1')
     def test_referral_code_female_hivunknown_pregnant(self):
         status_helper = MockStatusHelper(final_hiv_status=UNK)
         code = ReferralCode(status_helper=status_helper,
                             gender=FEMALE, pregnant=True)
         self.assertEqual(code.referral_code, 'UNK?-PR')
 
-    @tag('1')
     def test_referral_code_female_hivunknown_declined_pregnant(self):
         status_helper = MockStatusHelper(final_hiv_status=UNK, declined=True)
         code = ReferralCode(status_helper=status_helper,
                             gender=FEMALE, pregnant=True)
         self.assertEqual(code.referral_code, 'UNK?-PR')
 
-    @tag('1')
     def test_referral_code_hivneg_uncircumcised(self):
         status_helper = MockStatusHelper(final_hiv_status=NEG)
         for circumcised in [None, False]:
@@ -173,18 +156,15 @@ class TestReferralCodeUntested(TestCase):
 
 class TestReferralCodeTested(TestCase):
 
-    @tag('1')
     def test_referral_code_tested(self):
         self.assertRaises(
             ReferralCodeError,
             ReferralCodeTested)
 
-    @tag('1')
     def test_referral_code_tested_pos_repr(self):
         code = ReferralCodeTested(hiv_status=POS, gender=MALE)
         self.assertTrue(repr(code))
 
-    @tag('1')
     def test_referral_code_requires_gender(self):
         """Asserts NEG, None without gender raises, POS, IND does not.
         """
@@ -198,7 +178,6 @@ class TestReferralCodeTested(TestCase):
                 obj = ReferralCodeTested(hiv_status=hiv_status)
                 self.assertIsNotNone(obj.referral_code)
 
-    @tag('1')
     def test_referral_code_invalid_art(self):
         self.assertRaises(
             ReferralCodeError,
@@ -207,7 +186,6 @@ class TestReferralCodeTested(TestCase):
 
 class TestReferralCodePosFemale(TestCase):
 
-    @tag('1')
     def test_referral_code_knownpos_onart_not_pregnant(self):
         for newly_diagnosed in [True, False, None]:
             with self.subTest(newly_diagnosed=newly_diagnosed):
@@ -222,7 +200,6 @@ class TestReferralCodePosFemale(TestCase):
                             gender=FEMALE, pregnant=pregnant)
                         self.assertEqual(code.referral_code, 'MASA-CC')
 
-    @tag('1')
     def test_referral_code_newpos_naive_not_pregnant(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=NAIVE, newly_diagnosed=True)
@@ -232,7 +209,6 @@ class TestReferralCodePosFemale(TestCase):
                                     gender=FEMALE, pregnant=pregnant)
                 self.assertEqual(code.referral_code, 'POS!NVE')
 
-    @tag('1')
     def test_referral_code_knownpos_naive(self):
         for newly_diagnosed in [None, False]:
             with self.subTest(newly_diagnosed=newly_diagnosed):
@@ -247,7 +223,6 @@ class TestReferralCodePosFemale(TestCase):
                             gender=FEMALE, pregnant=pregnant)
                         self.assertEqual(code.referral_code, 'POS#NVE')
 
-    @tag('1')
     def test_referral_code_newpos_naive_preg(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=NAIVE, newly_diagnosed=True)
@@ -256,7 +231,6 @@ class TestReferralCodePosFemale(TestCase):
             gender=FEMALE, pregnant=True)
         self.assertEqual(code.referral_code, 'POS!-PR')
 
-    @tag('1')
     def test_referral_code_pos_naive_preg(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=NAIVE)
@@ -264,7 +238,6 @@ class TestReferralCodePosFemale(TestCase):
                             gender=FEMALE, pregnant=True)
         self.assertEqual(code.referral_code, 'POS#-PR')
 
-    @tag('1')
     def test_referral_code_pos_onart_preg(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=ON_ART)
@@ -275,20 +248,17 @@ class TestReferralCodePosFemale(TestCase):
 
 class TestReferralCodePosMale(TestCase):
 
-    @tag('2')
     def test_referral_code_hivpos(self):
         status_helper = MockStatusHelper(final_hiv_status=POS)
         code = ReferralCode(status_helper=status_helper, gender=MALE)
         self.assertEqual(code.referral_code, 'POS#NVE')
 
-    @tag('2')
     def test_referral_code_hivpos_circumcised(self):
         status_helper = MockStatusHelper(final_hiv_status=POS)
         code = ReferralCode(status_helper=status_helper,
                             gender=MALE, circumcised=True)
         self.assertEqual(code.referral_code, 'POS#NVE')
 
-    @tag('1')
     def test_referral_code_male_knownpos_onart(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=ON_ART)
@@ -298,7 +268,6 @@ class TestReferralCodePosMale(TestCase):
                                     gender=MALE, circumcised=circumcised)
                 self.assertEqual(code.referral_code, 'MASA-CC')
 
-    @tag('1')
     def test_referral_code_male_pos_naive(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=NAIVE)
@@ -308,7 +277,6 @@ class TestReferralCodePosMale(TestCase):
                                     gender=MALE, circumcised=circumcised)
                 self.assertEqual(code.referral_code, 'POS#NVE')
 
-    @tag('1')
     def test_referral_code_male_newpos_naive(self):
         status_helper = MockStatusHelper(
             final_hiv_status=POS, final_arv_status=NAIVE, newly_diagnosed=True)
@@ -322,21 +290,18 @@ class TestReferralCodePosMale(TestCase):
 
 class TestReferralCodePosCd4(TestCase):
 
-    @tag('1')
     def test_referral_code_hivpos_lo_cd4(self):
         status_helper = MockStatusHelper(final_hiv_status=POS)
         code = ReferralCode(status_helper=status_helper,
                             gender=MALE, cd4_result=100)
         self.assertEqual(code.referral_code, 'POS#-LO')
 
-    @tag('1')
     def test_referral_code_hivpos_hi_cd4(self):
         status_helper = MockStatusHelper(final_hiv_status=POS)
         code = ReferralCode(status_helper=status_helper,
                             gender=MALE, circumcised=True, cd4_result=600)
         self.assertEqual(code.referral_code, 'POS#-HI')
 
-    @tag('1')
     def test_referral_code_hivpos_invalid_cd4(self):
         status_helper = MockStatusHelper(final_hiv_status=POS)
         self.assertRaises(

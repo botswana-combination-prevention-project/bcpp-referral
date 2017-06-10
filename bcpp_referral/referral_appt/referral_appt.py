@@ -5,13 +5,12 @@ from collections import namedtuple
 from django.core.exceptions import ValidationError
 
 from edc_appointment.models import Holiday
-# from edc_map.site_mappers import site_mappers
 
-from .choices import REFERRAL_CODES
 from .next_clinic_date import next_clinic_date
+from .clinic_type import ClinicType
 
 
-class ReferralAppt(object):
+class ReferralAppt:
     """A class to determine the referral appointment date.
 
     The referral code will determine the correct clinic,
@@ -19,12 +18,12 @@ class ReferralAppt(object):
     :func:`next_appt_date.
     """
 
-    def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
-                 community_code=None, community_clinic_days=None):
-        """This class and its needed attribute values are wrapped by
-        the SubjectReferralHelper.
+    clinic_type_cls = ClinicType
 
-        Usage:
+    def __init__(self, referral_code=None, base_datetime=None, scheduled_appt_date=None,
+                 map_code=None, map_area=None, community_clinic_days=None):
+        """
+        old usage:
                 subject_referral_appt_helper = SubjectReferralApptHelper(
                     subject_referral.referral_code,
                     base_date=subject_referral.report_datetime,
@@ -34,24 +33,13 @@ class ReferralAppt(object):
         See also tests.
         """
 
-        # should come from the user as today's date??
-        # TODO: timezone?
-        if base_date:
-            self.base_datetime = datetime(
-                base_date.year,
-                base_date.month,
-                base_date.day, 7, 30, 0)
-        else:
-            self.base_datetime = datetime.combine(
-                datetime.today(), time(7, 30, 0))
+        self.base_datetime = base_datetime
         self.masa_appt_datetime = scheduled_appt_date
-        self.community_code = community_code or site_mappers.current_mapper.map_code
-        self.community_name = community_code or site_mappers.current_mapper.map_area
         self.original_scheduled_appt_date = scheduled_appt_date
-        if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
-            raise TypeError(
-                'Invalid referral code. Got {0}'.format(referral_code))
         self.referral_code = referral_code
+        self.referral_clinic_type = self.clinic_type_cls(
+            referral_code=self.referral_code)
+
         ClinicDaysTuple = namedtuple('ClinicDaysTuple', 'days start_date')
 
         try:
@@ -63,10 +51,10 @@ class ReferralAppt(object):
             pass
 
     def __repr__(self):
-        return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)
+        return f'{self.__class__.__name__}({self.referral_code})'
 
     def __str__(self):
-        return '({0.referral_code!r})'.format(self)
+        return f'{self.referral_code}'
 
     def referral_appt_datetime_other(self):
         """ Docstring is required """
@@ -126,31 +114,6 @@ class ReferralAppt(object):
                 referral_appt_datetime
                 or next_clinic_date(self.clinic_days, self.base_datetime))
         return referral_appt_datetime
-
-    @property
-    def referral_clinic_type(self):
-        """Returns the calculated referral appointment date based on
-        the referral code and a scheduled appointment date.
-        """
-        clinic_type = None
-        if self.referral_code:
-            if self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
-                clinic_type = 'IDCC'
-            elif 'MASA' in self.referral_code:
-                clinic_type = 'IDCC'
-            elif 'TST-HIV' in self.referral_code:
-                clinic_type = 'VCT'
-            elif 'TST-CD4' in self.referral_code:
-                clinic_type = 'IDCC'
-            elif ('POS!-PR' in self.referral_code
-                  or 'POS#-PR' in self.referral_code
-                  or 'POS#-AN' in self.referral_code):
-                clinic_type = 'IDCC'
-            elif '-PR' in self.referral_code or '-AN' in self.referral_code:
-                clinic_type = 'ANC'
-            elif 'SMC' in self.referral_code:
-                clinic_type = 'SMC'
-        return clinic_type
 
     @property
     def scheduled_appt_datetime(self):
