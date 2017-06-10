@@ -1,0 +1,3 @@
+
+class ReferralError(Exception):
+    pass
