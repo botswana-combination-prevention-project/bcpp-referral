@@ -6,7 +6,7 @@ from dateutil.relativedelta import MO, TU, WE, weekday
 from edc_appointment.facility import Facility
 
 from ..referral_facility import ReferralFacilities, ReferralFacility, ReferralFacilityError
-from ..referral_facility import ReferralFacilityDuplicateCode, ReferralFacilityAlreadyRegistered
+from ..referral_facility import ReferralFacilityDuplicateCode, ReferralFacilityAlreadyRegistered, ReferralFacilityNotFound
 
 
 @tag('referral_codes')
@@ -236,4 +236,6 @@ class TestReferralFacilities2(TestCase):
         self.assertEqual(referral_facility1, facilities.get_facility('B'))
         self.assertEqual(referral_facility2, facilities.get_facility('C'))
         self.assertEqual(referral_facility2, facilities.get_facility('D'))
-        self.assertIsNone(facilities.get_facility('BLAH'))
+        self.assertRaises(
+            ReferralFacilityNotFound,
+            facilities.get_facility, 'BLAH')

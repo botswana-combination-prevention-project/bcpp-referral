@@ -22,19 +22,20 @@ class ReferralCode:
         code for code, _ in REFERRAL_CODES if not code == 'pending']
 
     def __init__(self, gender=None, circumcised=None, pregnant=None,
-                 status_helper=None, cd4_result=None, **kwargs):
+                 final_hiv_status=None, final_arv_status=None,
+                 newly_diagnosed=None, declined=None, cd4_result=None, **kwargs):
+
         self.referral_code = None
 
-        if status_helper.final_hiv_status not in self.valid_hiv_status:
+        if final_hiv_status not in self.valid_hiv_status:
             raise ReferralCodeError(
-                f'Invalid HIV status. Got {status_helper.final_hiv_status}. '
+                f'Invalid HIV status. Got {final_hiv_status}. '
                 f'Expected one of {self.valid_hiv_status}.')
-        elif status_helper.final_arv_status not in self.valid_arv_status:
+        elif final_arv_status not in self.valid_arv_status:
             raise ReferralCodeError(
-                f'Invalid ARV status. Got {status_helper.final_arv_status}. '
+                f'Invalid ARV status. Got {final_arv_status}. '
                 f'Expected one of {self.valid_arv_status}.')
-        elif (status_helper.final_hiv_status in [None, UNK]
-              or status_helper.current.declined):
+        elif (final_hiv_status in [None, UNK] or declined):
             obj = self.referral_code_untested_cls(
                 gender=gender, circumcised=circumcised, pregnant=pregnant)
             self.referral_code = obj.referral_code
@@ -44,8 +45,8 @@ class ReferralCode:
                 gender=gender,
                 circumcised=circumcised,
                 pregnant=pregnant,
-                hiv_status=status_helper.final_hiv_status,
-                arv_status=status_helper.final_arv_status,
-                newly_diagnosed=status_helper.newly_diagnosed,
+                hiv_status=final_hiv_status,
+                arv_status=final_arv_status,
+                newly_diagnosed=newly_diagnosed,
                 cd4_result=cd4_result)
             self.referral_code = obj.referral_code

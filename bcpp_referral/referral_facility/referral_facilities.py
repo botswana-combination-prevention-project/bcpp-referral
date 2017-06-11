@@ -7,6 +7,10 @@ class ReferralFacilityAlreadyRegistered(Exception):
     pass
 
 
+class ReferralFacilityNotFound(Exception):
+    pass
+
+
 class ReferralFacilities:
 
     """A named collection of referral facility instances.
@@ -15,6 +19,12 @@ class ReferralFacilities:
     def __init__(self, name=None):
         self._register = {}
         self.name = name  # e.g. community / map_area
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(name={self.name})'
+
+    def __str__(self):
+        return self.name
 
     @property
     def facilities(self):
@@ -26,7 +36,9 @@ class ReferralFacilities:
         for facility in self._register.values():
             if referral_code in facility.all_codes:
                 return facility
-        return None
+        raise ReferralFacilityNotFound(
+            f'Referral facility not found. Got referral '
+            f'code \'{referral_code}\'. See {repr(self)}')
 
     def add_facility(self, facility=None):
         """Adds a new facility.

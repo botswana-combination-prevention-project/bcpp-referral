@@ -2,15 +2,14 @@ from django.test import TestCase, tag
 from dateutil.relativedelta import TU, WE
 
 from edc_appointment.facility import Facility
-from edc_constants.constants import MALE
+from edc_constants.constants import MALE, POS, NAIVE
+from edc_registration.models import RegisteredSubject
 
-from bcpp_status import StatusHelper
-
-from ..data_helpers import MaleDataHelper
+from ..data_helper import DataHelper
 from ..referral import Referral
 from ..referral_facility import ReferralFacility, ReferralFacilities
 from .models import SubjectVisit, SubjectReferral, ReproductiveHealth, HivCareAdherence, PimaCd4
-from edc_registration.models import RegisteredSubject
+from .mocks import MockStatusHelper
 
 
 class TestReferral(TestCase):
@@ -21,7 +20,7 @@ class TestReferral(TestCase):
         self.facility2 = Facility(
             name='leiden', days=[TU, WE], forward_only=True)
         referral_facility1 = ReferralFacility(
-            facility=self.facility1, routine_codes=['A'], urgent_codes=['B'])
+            facility=self.facility1, routine_codes=['A'], urgent_codes=['POS#NVE', 'POS!NVE'])
         referral_facility2 = ReferralFacility(
             facility=self.facility2, routine_codes=['C'], urgent_codes=['D'])
         self.facilities = ReferralFacilities(name='test')
@@ -34,10 +33,12 @@ class TestReferral(TestCase):
         RegisteredSubject.objects.create(
             subject_identifier=subject_identifier,
             gender=MALE)
-        subject_visit = SubjectVisit(subject_identifier=subject_identifier)
-        Referral(
-            data_helper_cls=MaleDataHelper,
-            referral_facilities=self.facilities,
-            gender=MALE,
-            subject_visit=subject_visit,
-            status_helper_cls=StatusHelper)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        data_helper = DataHelper(subject_visit=subject_visit)
+        status_helper = MockStatusHelper(
+            final_hiv_status=POS, final_arv_status=NAIVE)
+        data = {}
+        data.update(**data_helper.data)
+        data.update(**status_helper.__dict__)
+        Referral(referral_facilities=self.facilities, **data)
