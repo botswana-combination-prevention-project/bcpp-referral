@@ -2,10 +2,9 @@ from django.test import TestCase, tag
 
 from edc_constants.constants import POS, MALE, NAIVE, NEG, FEMALE, UNK, IND
 
-from ..referral_code import ReferralCode, ReferralCodeError
 from bcpp_status.constants import ON_ART, DEFAULTER
-from bcpp_referral.referral_code import ReferralCodeUntested,\
-    ReferralCodeTested
+
+from ..referral_code import ReferralCode, ReferralCodeError, ReferralCodeUntested, ReferralCodeTested
 
 
 class MockCurrent:
@@ -31,6 +30,7 @@ class MockStatusHelper:
         return f'{self.__class__.__name__}({self.__dict__})'
 
 
+@tag('referral_code')
 class TestReferralCodeUntested(TestCase):
 
     def test_referral_code_untested(self):
@@ -154,6 +154,7 @@ class TestReferralCodeUntested(TestCase):
                 self.assertEqual(code.referral_code, 'SMC-NEG')
 
 
+@tag('referral_code')
 class TestReferralCodeTested(TestCase):
 
     def test_referral_code_tested(self):
@@ -184,6 +185,7 @@ class TestReferralCodeTested(TestCase):
             ReferralCodeTested, hiv_status=POS, arv_status='BLAH')
 
 
+@tag('referral_code')
 class TestReferralCodePosFemale(TestCase):
 
     def test_referral_code_knownpos_onart_not_pregnant(self):
@@ -246,6 +248,7 @@ class TestReferralCodePosFemale(TestCase):
         self.assertEqual(code.referral_code, 'POS#-AN')
 
 
+@tag('referral_code')
 class TestReferralCodePosMale(TestCase):
 
     def test_referral_code_hivpos(self):
@@ -288,6 +291,7 @@ class TestReferralCodePosMale(TestCase):
                 self.assertEqual(code.referral_code, 'POS!NVE')
 
 
+@tag('referral_code')
 class TestReferralCodePosCd4(TestCase):
 
     def test_referral_code_hivpos_lo_cd4(self):

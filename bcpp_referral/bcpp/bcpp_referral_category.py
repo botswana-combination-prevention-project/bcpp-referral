@@ -1,26 +1,30 @@
-from ..referral_code import ReferralCategory
+from ..referral_facility import ReferralFacility, ReferralFacilities
 
-bcpp_referral_category = ReferralCategory(name='bcpp')
+bcpp_referral = ReferralFacilities(name='bcpp')
 
-bcpp_referral_category.add(
+anc_facility = ReferralFacility(
     name='anc',
-    urgent_referral_codes=['NEG!-PR', 'UNK?-PR', 'POS#-AN'],
-    routine_referral_codes=[])
-
-bcpp_referral_category.add(
+    urgent_codes=['NEG!-PR', 'UNK?-PR', 'POS#-AN'],
+    routine_codes=[])
+idcc_facility = ReferralFacility(
     name='idcc',
-    urgent_referral_codes=[
+    urgent_codes=[
         'POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO',
         'POS#NVE', 'POS!NVE', 'POS!-PR', 'POS#-PR', 'POS#-PR',
         'MASA-DF'],
-    routine_referral_codes=['MASA-CC'])
+    routine_codes=['MASA-CC'])
 
-bcpp_referral_category.add(
+smc_facility = ReferralFacility(
     name='smc',
-    urgent_referral_codes=[],
-    routine_referral_codes=['SMC-NEG', 'SMC-UNK'])
+    urgent_codes=[],
+    routine_codes=['SMC-NEG', 'SMC-UNK'])
 
-bcpp_referral_category.add(
+vct_facility = ReferralFacility(
     name='vct',
-    urgent_referral_codes=['TST-HIV'],
-    routine_referral_codes=[])
+    urgent_codes=['TST-HIV'],
+    routine_codes=[])
+
+bcpp_referral.add_facility(facility=anc_facility)
+bcpp_referral.add_facility(facility=idcc_facility)
+bcpp_referral.add_facility(facility=smc_facility)
+bcpp_referral.add_facility(facility=vct_facility)

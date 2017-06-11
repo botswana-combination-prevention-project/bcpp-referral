@@ -1,6 +1,7 @@
 class Codes:
 
     def __init__(self, **options):
+        self.code = None
         self.hivind = options.get('hivind')
         self.hivneg_pregnant = options.get('hivneg_pregnant')
         self.hivneg_uncircumcised = options.get('hivneg_uncircumcised')
