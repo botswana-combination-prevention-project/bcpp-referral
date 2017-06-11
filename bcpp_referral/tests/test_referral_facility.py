@@ -6,7 +6,8 @@ from dateutil.relativedelta import MO, TU, WE, weekday
 from edc_appointment.facility import Facility
 
 from ..referral_facility import ReferralFacilities, ReferralFacility, ReferralFacilityError
-from ..referral_facility import ReferralFacilityDuplicateCode, ReferralFacilityAlreadyRegistered, ReferralFacilityNotFound
+from ..referral_facility import ReferralFacilityDuplicateCode, ReferralFacilityAlreadyRegistered
+from ..referral_facility import ReferralFacilityNotFound
 
 
 @tag('referral_codes')

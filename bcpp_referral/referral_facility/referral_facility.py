@@ -5,10 +5,6 @@ class ReferralFacilityError(Exception):
 
 class ReferralFacility:
 
-    """A class to change a facility into a referral facility
-    by associating the facility with referral codes.
-    """
-
     def __init__(self, facility=None, routine_codes=None, urgent_codes=None):
         self.name = facility.name
         self.all_codes = []
