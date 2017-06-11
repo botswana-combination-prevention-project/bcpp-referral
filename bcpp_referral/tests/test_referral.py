@@ -8,7 +8,7 @@ from edc_registration.models import RegisteredSubject
 from ..data_helper import DataHelper
 from ..referral import Referral
 from ..referral_facility import ReferralFacility, ReferralFacilities
-from .models import SubjectVisit, SubjectReferral, ReproductiveHealth, HivCareAdherence, PimaCd4
+from .models import SubjectVisit
 from .mocks import MockStatusHelper
 
 
