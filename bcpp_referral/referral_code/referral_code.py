@@ -1,6 +1,4 @@
-from edc_constants.constants import NEG, UNK, POS, NAIVE, IND
-
-from bcpp_status.constants import ON_ART, DEFAULTER
+from edc_constants.constants import NEG, UNK, POS, NAIVE, IND, ON_ART, DEFAULTER
 
 from ..choices import REFERRAL_CODES
 from .referral_code_tested import ReferralCodeError, ReferralCodeTested

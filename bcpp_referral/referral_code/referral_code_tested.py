@@ -1,6 +1,4 @@
-from edc_constants.constants import MALE, FEMALE, NEG, POS, NAIVE, IND
-
-from bcpp_status.constants import ON_ART, DEFAULTER
+from edc_constants.constants import MALE, FEMALE, NEG, POS, NAIVE, IND, ON_ART, DEFAULTER
 
 
 class ReferralCodeError(Exception):

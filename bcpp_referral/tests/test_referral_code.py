@@ -1,8 +1,6 @@
 from django.test import TestCase, tag
 
-from edc_constants.constants import POS, MALE, NAIVE, NEG, FEMALE, UNK, IND
-
-from bcpp_status.constants import ON_ART, DEFAULTER
+from edc_constants.constants import POS, MALE, NAIVE, NEG, FEMALE, UNK, IND, ON_ART, DEFAULTER
 
 from ..referral_code import ReferralCode, ReferralCodeError, ReferralCodeUntested, ReferralCodeTested
 
