@@ -1,9 +1,9 @@
 language: python
 python:
   - "3.6"
+
 env:
   - DJANGO_VERSION=1.11.2
-  - PROJECT=bcpp_referral
 
 services:
   - mysql
@@ -17,11 +17,11 @@ install:
   - pip3 install -q -r requirements.txt
 
 before_script:
-  - flake8 $PROJECT
+  - flake8 bcpp_referral
   - mysql -e 'create database edc character set utf8;'
 
 script: 
-  - coverage run --source=$PROJECT manage.py test
+  - coverage run --source=bcpp_referral manage.py test
 
 after_success:
   - coveralls
