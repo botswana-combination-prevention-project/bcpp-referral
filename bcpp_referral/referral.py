@@ -15,14 +15,14 @@ class Referral:
         self.scheduled_appt_datetime = scheduled_appt_datetime
 
         self.referral_code = self.referral_code_cls(**kwargs).referral_code
-        facility = referral_facilities.get_facility(
+        self.facility = referral_facilities.get_facility(
             referral_code=self.referral_code)
 
-        self.referral_appt_datetime = facility.available_datetime(
+        self.referral_appt_datetime = self.facility.available_datetime(
             referral_code=self.referral_code,
             report_datetime=self.report_datetime,
             scheduled_appt_datetime=self.scheduled_appt_datetime)
-        self.urgent_referral = facility.is_urgent(
+        self.urgent_referral = self.facility.is_urgent(
             referral_code=self.referral_code)
         self.subject_identifier = self.subject_identifier
 

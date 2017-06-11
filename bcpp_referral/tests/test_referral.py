@@ -27,7 +27,6 @@ class TestReferral(TestCase):
         self.facilities.add_facility(facility=referral_facility1)
         self.facilities.add_facility(facility=referral_facility2)
 
-    @tag('1')
     def test_referral(self):
         subject_identifier = '111111'
         RegisteredSubject.objects.create(
@@ -42,3 +41,51 @@ class TestReferral(TestCase):
         data.update(**data_helper.data)
         data.update(**status_helper.__dict__)
         Referral(referral_facilities=self.facilities, **data)
+
+    def test_referral_facility(self):
+        subject_identifier = '111111'
+        RegisteredSubject.objects.create(
+            subject_identifier=subject_identifier,
+            gender=MALE)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        data_helper = DataHelper(subject_visit=subject_visit)
+        status_helper = MockStatusHelper(
+            final_hiv_status=POS, final_arv_status=NAIVE)
+        data = {}
+        data.update(**data_helper.data)
+        data.update(**status_helper.__dict__)
+        referral = Referral(referral_facilities=self.facilities, **data)
+        self.assertEqual(referral.facility.name, 'nijmegen')
+
+    def test_referral_facility_referral_appt_datetime(self):
+        subject_identifier = '111111'
+        RegisteredSubject.objects.create(
+            subject_identifier=subject_identifier,
+            gender=MALE)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        data_helper = DataHelper(subject_visit=subject_visit)
+        status_helper = MockStatusHelper(
+            final_hiv_status=POS, final_arv_status=NAIVE)
+        data = {}
+        data.update(**data_helper.data)
+        data.update(**status_helper.__dict__)
+        referral = Referral(referral_facilities=self.facilities, **data)
+        self.assertIsNotNone(referral.referral_appt_datetime)
+
+    def test_referral_facility_urgent_referral(self):
+        subject_identifier = '111111'
+        RegisteredSubject.objects.create(
+            subject_identifier=subject_identifier,
+            gender=MALE)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        data_helper = DataHelper(subject_visit=subject_visit)
+        status_helper = MockStatusHelper(
+            final_hiv_status=POS, final_arv_status=NAIVE)
+        data = {}
+        data.update(**data_helper.data)
+        data.update(**status_helper.__dict__)
+        referral = Referral(referral_facilities=self.facilities, **data)
+        self.assertTrue(referral.urgent_referral)
