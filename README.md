@@ -1,6 +1,7 @@
 # bcpp-referral
 
 [![Build Status](https://travis-ci.org/botswana-harvard/bcpp-referral.svg?branch=develop)](https://travis-ci.org/botswana-harvard/bcpp-referral)
+
 [![Coverage Status](https://coveralls.io/repos/github/botswana-harvard/bcpp-referral/badge.svg?branch=develop)](https://coveralls.io/github/botswana-harvard/bcpp-referral?branch=develop)
 
 collate and distribute referral data for BCPP
