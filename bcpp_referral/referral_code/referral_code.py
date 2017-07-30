@@ -11,7 +11,6 @@ class ReferralCode:
     such as gender, hiv_status, arv_status, circumcision,
     pregnancy, etc.
     """
-
     referral_code_untested_cls = ReferralCodeUntested
     referral_code_tested_cls = ReferralCodeTested
     valid_hiv_status = [POS, NEG, IND, UNK, None]
@@ -21,7 +20,7 @@ class ReferralCode:
 
     def __init__(self, gender=None, circumcised=None, pregnant=None,
                  final_hiv_status=None, final_arv_status=None,
-                 newly_diagnosed=None, declined=None, cd4_result=None, **kwargs):
+                 newly_diagnosed=None, declined=None, cd4_result=None):
 
         self.referral_code = None
 

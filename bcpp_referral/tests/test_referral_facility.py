@@ -5,12 +5,13 @@ from dateutil.relativedelta import MO, TU, WE, weekday
 
 from edc_appointment.facility import Facility
 
-from ..referral_facility import ReferralFacilities, ReferralFacility, ReferralFacilityError
-from ..referral_facility import ReferralFacilityDuplicateCode, ReferralFacilityAlreadyRegistered
+from ..referral_facility import ReferralFacilities, ReferralFacility
+from ..referral_facility import ReferralFacilityAlreadyRegistered
+from ..referral_facility import ReferralFacilityDuplicateCode
+from ..referral_facility import ReferralFacilityError
 from ..referral_facility import ReferralFacilityNotFound
 
 
-@tag('referral_codes')
 class TestReferralFacility(TestCase):
 
     def test_referral_facility_code_lists(self):

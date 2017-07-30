@@ -53,6 +53,8 @@ Associate each facility with a unique list of referral codes. Separate the refer
     
 ## Refer a participant:
 
+    from bcpp_status import StatusHelper
+
     data_helper = DataHelper(subject_visit=subject_visit)
     status_helper = StatusHelper(subject_visit=subject_visit)
     data = {}

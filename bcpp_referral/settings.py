@@ -32,9 +32,13 @@ INSTALLED_APPS = [
     'edc_device.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
     'edc_appointment.apps.AppConfig',
+    'edc_map.apps.AppConfig',
+    'edc_reference.apps.AppConfig',
     'edc_registration.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
-    'edc_visit_schedule.apps.AppConfig',
+    'bcpp_community.apps.AppConfig',
+    'bcpp_reference.apps.AppConfig',
+    'bcpp_visit_schedule.apps.AppConfig',
     'bcpp_referral.apps.AppConfig',
 ]
 
@@ -118,7 +122,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 GIT_DIR = BASE_DIR
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 KEY_PATH = os.path.join(BASE_DIR, 'crypto_fields')
+GIT_DIR = BASE_DIR
+CURRENT_MAP_AREA = 'test_community'
 
 if 'test' in sys.argv:
 

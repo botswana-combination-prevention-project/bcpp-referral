@@ -1,3 +1,6 @@
+from dateutil.relativedelta import MO, TU, WE, TH, FR
+from edc_appointment.facility import Facility
+
 
 class ReferralFacilityError(Exception):
     pass
@@ -5,10 +8,16 @@ class ReferralFacilityError(Exception):
 
 class ReferralFacility:
 
-    def __init__(self, facility=None, routine_codes=None, urgent_codes=None):
-        self.name = facility.name
+    def __init__(self, name=None, days=None, facility=None, routine_codes=None, urgent_codes=None):
+        if name:
+            self.name = name
+            self.facility = Facility(
+                name=name, days=[MO, TU, WE, TH, FR],
+                slots=[99999, 99999, 99999, 99999, 99999])
+        else:
+            self.name = facility.name
+            self.facility = facility
         self.all_codes = []
-        self.facility = facility
         self.routine_codes = routine_codes or []
         self.urgent_codes = urgent_codes or []
         self.all_codes.extend(self.routine_codes)
@@ -24,7 +33,8 @@ class ReferralFacility:
     def __str__(self):
         return self.name
 
-    def available_datetime(self, referral_code=None, scheduled_appt_datetime=None, report_datetime=None):
+    def available_datetime(self, referral_code=None, scheduled_appt_datetime=None,
+                           report_datetime=None):
         """Returns a timezone aware datetime considering the referral_code.
 
         report_datetime: date to use if urgent

@@ -1,11 +1,12 @@
 from django.test import TestCase, tag
 
-from edc_constants.constants import POS, MALE, NAIVE, NEG, FEMALE, UNK, IND, ON_ART, DEFAULTER
+from edc_constants.constants import POS, MALE, NAIVE, NEG, FEMALE, UNK
+from edc_constants.constants import IND, ON_ART, DEFAULTER
 
-from ..referral_code import ReferralCode, ReferralCodeError, ReferralCodeUntested, ReferralCodeTested
+from ..referral_code import ReferralCode, ReferralCodeError
+from ..referral_code import ReferralCodeUntested, ReferralCodeTested
 
 
-@tag('referral_code')
 class TestReferralCodeUntested(TestCase):
 
     def test_referral_code_untested(self):

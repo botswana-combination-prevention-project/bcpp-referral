@@ -1,4 +1,3 @@
-reportlab
 git+https://github.com/botswana-harvard/edc-base@develop#egg=edc-base
 git+https://github.com/botswana-harvard/edc-appointment@develop#egg=edc-appointment
 git+https://github.com/botswana-harvard/edc-metadata@develop#egg=edc-metadata
@@ -9,5 +8,7 @@ git+https://github.com/botswana-harvard/edc-device@develop#egg=edc-device
 git+https://github.com/botswana-harvard/edc-constants@develop#egg=edc-constants
 git+https://github.com/botswana-harvard/edc-identifier@develop#egg=edc-identifier
 git+https://github.com/botswana-harvard/edc-protocol@develop#egg=edc-protocol
+git+https://github.com/botswana-harvard/edc-reference@develop#egg=edc-reference
 git+https://github.com/botswana-harvard/edc-registration@develop#egg=edc-registration
 git+https://github.com/botswana-harvard/edc-visit-schedule@develop#egg=edc-visit-schedule
+git+https://github.com/botswana-harvard/bcpp-status@develop#egg=bcpp-status

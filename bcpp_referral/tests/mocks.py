@@ -10,7 +10,8 @@ class MockCurrent:
 class MockStatusHelper:
 
     def __init__(self, final_hiv_status=None, final_arv_status=None,
-                 indeterminate=None, declined=None, newly_diagnosed=None):
+                 indeterminate=None, declined=None,
+                 newly_diagnosed=None, **kwargs):
         self.current = MockCurrent(declined=declined)
         self.final_hiv_status = final_hiv_status
         self.final_arv_status = final_arv_status
