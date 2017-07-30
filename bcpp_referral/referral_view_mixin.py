@@ -10,6 +10,6 @@ class ReferralViewMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.subject_visit:
-            self.referral = Referral(self.subject_visit)
+            self.referral = Referral(subject_visit=self.subject_visit)
         context.update(referral=self.referral)
         return context
