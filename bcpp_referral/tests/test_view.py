@@ -25,6 +25,7 @@ class TestView(TestCase):
     reference_config_helper = ReferenceConfigHelper()
 
     def setUp(self):
+        # reconfig reference configs to use app_label = bcpp_referral
         self.reference_config_helper.reconfigure('bcpp_referral')
 
         self.subject_identifier = '12345'
