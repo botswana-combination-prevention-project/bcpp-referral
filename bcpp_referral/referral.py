@@ -7,6 +7,7 @@ from datetime import datetime
 
 from .data_getter import ReferralDataGetterError
 from .referral_code import ReferralCodeError
+from .referral_facility import ReferralFacilityNotFound
 
 
 class Referral:
@@ -52,9 +53,6 @@ class Referral:
         else:
             self.referral_code = referral_code_obj.referral_code
 
-        self.facility = referral_facilities.get_facility(
-            referral_code=self.referral_code)
-
         if data_getter.scheduled_appt_date:
             dt = data_getter.scheduled_appt_date
             self.scheduled_appt_datetime = Arrow.fromdatetime(
@@ -62,12 +60,19 @@ class Referral:
         else:
             self.scheduled_appt_datetime = None
 
-        self.referral_appt_datetime = self.facility.available_datetime(
-            referral_code=self.referral_code,
-            report_datetime=data_getter.report_datetime,
-            scheduled_appt_datetime=self.scheduled_appt_datetime)
-        self.urgent_referral = self.facility.is_urgent(
-            referral_code=self.referral_code)
+        try:
+            self.facility = referral_facilities.get_facility(
+                referral_code=self.referral_code)
+        except ReferralFacilityNotFound:
+            self.referral_appt_datetime = None
+            self.urgent_referral = None
+        else:
+            self.referral_appt_datetime = self.facility.available_datetime(
+                referral_code=self.referral_code,
+                report_datetime=data_getter.report_datetime,
+                scheduled_appt_datetime=self.scheduled_appt_datetime)
+            self.urgent_referral = self.facility.is_urgent(
+                referral_code=self.referral_code)
 
     def __repr__(self):
         return f'{self.__class__.__name__}'
