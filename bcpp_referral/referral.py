@@ -6,6 +6,7 @@ from arrow.arrow import Arrow
 from datetime import datetime
 
 from .data_getter import ReferralDataGetterError
+from .referral_code import ReferralCodeError
 
 
 class Referral:
@@ -35,16 +36,21 @@ class Referral:
         except ReferralDataGetterError:
             circumcised = None
 
-        self.referral_code = self.referral_code_cls(
-            gender=data_getter.gender,
-            circumcised=circumcised,
-            pregnant=pregnant,
-            cd4_result=data_getter.cd4_result,
-            final_hiv_status=status_helper.final_hiv_status,
-            final_arv_status=status_helper.final_arv_status,
-            newly_diagnosed=status_helper.newly_diagnosed,
-            declined=status_helper.declined,
-        ).referral_code
+        try:
+            referral_code_obj = self.referral_code_cls(
+                gender=data_getter.gender,
+                circumcised=circumcised,
+                pregnant=pregnant,
+                cd4_result=data_getter.cd4_result,
+                final_hiv_status=status_helper.final_hiv_status,
+                final_arv_status=status_helper.final_arv_status,
+                newly_diagnosed=status_helper.newly_diagnosed,
+                declined=status_helper.declined,
+            )
+        except ReferralCodeError:
+            self.referral_code = None
+        else:
+            self.referral_code = referral_code_obj.referral_code
 
         self.facility = referral_facilities.get_facility(
             referral_code=self.referral_code)
