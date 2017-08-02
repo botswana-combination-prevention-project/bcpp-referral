@@ -2,7 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from edc_constants.constants import YES, FEMALE, MALE
 from edc_registration.models import RegisteredSubject
-from pprint import pprint
 
 
 class ReferralDataGetterError(Exception):
