@@ -1,11 +1,8 @@
 from bcpp_status import StatusHelper
 
-from .referral_code import ReferralCode
 from .data_getter import DataGetter
-from arrow.arrow import Arrow
-from datetime import datetime
-
 from .data_getter import ReferralDataGetterError
+from .referral_code import ReferralCode
 from .referral_code import ReferralCodeError
 from .referral_facility import ReferralFacilityNotFound, ReferralFacilityDateError
 

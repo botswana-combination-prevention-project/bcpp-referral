@@ -1,5 +1,5 @@
-from .referral import Referral
 from .bcpp_referral_facilities import bcpp_referral_facilities
+from .referral import Referral
 
 
 class ReferralViewMixin:

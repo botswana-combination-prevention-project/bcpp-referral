@@ -1,6 +1,5 @@
 from django.apps import apps as django_apps
-
-from edc_metadata.models import CrfMetadata
+from django.core.exceptions import ObjectDoesNotExist
 from edc_metadata.constants import REQUIRED
 
 
@@ -9,6 +8,7 @@ def get_required_crf(subject_visit=None, subject_identifier=None,
     """ Returns model class for a CRF required for the referral
     but not yet keyed.
     """
+    crf_metadata_model_cls = django_apps.get_model('edc_metadata.crfmetadata')
     if subject_visit:
         subject_identifier = subject_visit.subject_identifier
         visit_code = subject_visit.visit_code
@@ -25,13 +25,13 @@ def get_required_crf(subject_visit=None, subject_identifier=None,
 
     for crf in crfs:
         try:
-            CrfMetadata.objects.get(
+            crf_metadata_model_cls.objects.get(
                 model=crf,
                 subject_identifier=subject_identifier,
                 entry_status=REQUIRED,
                 visit_code=visit_code)
             return django_apps.get_app_config(
                 crf.split('.')[0]).get_model(crf.split('.')[1])
-        except CrfMetadata.DoesNotExist:
+        except ObjectDoesNotExist:
             pass
     return None
