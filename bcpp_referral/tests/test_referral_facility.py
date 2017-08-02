@@ -9,6 +9,7 @@ from ..referral_facility import ReferralFacilities, ReferralFacility
 from ..referral_facility import ReferralFacilityAlreadyRegistered
 from ..referral_facility import ReferralFacilityDuplicateCode
 from ..referral_facility import ReferralFacilityError
+from ..referral_facility import ReferralFacilityDateError
 from ..referral_facility import ReferralFacilityNotFound
 
 
@@ -87,7 +88,7 @@ class TestReferralFacility(TestCase):
         referral_facility = ReferralFacility(
             facility=facility, routine_codes=['MASA-CC'], urgent_codes=['MASA-DF'])
         self.assertRaises(
-            ReferralFacilityError,
+            ReferralFacilityDateError,
             referral_facility.available_datetime, referral_code='MASA-DF')
 
     def test_referral_facility_routine_available_datetime_raises(self):
@@ -96,7 +97,7 @@ class TestReferralFacility(TestCase):
         referral_facility = ReferralFacility(
             facility=facility, routine_codes=['MASA-CC'], urgent_codes=['MASA-DF'])
         self.assertRaises(
-            ReferralFacilityError,
+            ReferralFacilityDateError,
             referral_facility.available_datetime, referral_code='MASA-CC')
 
     def test_referral_facility_routine_available_datetime(self):

@@ -1,5 +1,6 @@
+from arrow.arrow import Arrow
+from datetime import datetime, time
 from django.core.exceptions import ObjectDoesNotExist
-
 from edc_constants.constants import YES, FEMALE, MALE
 from edc_registration.models import RegisteredSubject
 
@@ -14,6 +15,7 @@ class DataGetter:
 
     PimaCd4, HivCareAdherence, SubjectReferral, ReproductiveHealth, Circumcision
     """
+    default_time = time(7, 30)
 
     def __init__(self, subject_visit=None):
         self._cd4_result = None
@@ -94,6 +96,18 @@ class DataGetter:
         else:
             gender = registered_subject.gender
         return gender
+
+    @property
+    def scheduled_appt_datetime(self):
+        scheduled_appt_datetime = None
+        if self.scheduled_appt_date:
+            dt = self.scheduled_appt_date
+            scheduled_appt_datetime = Arrow.fromdatetime(
+                datetime(
+                    dt.year, dt.month, dt.day,
+                    self.default_time.hour,
+                    self.default_time.minute)).datetime
+        return scheduled_appt_datetime
 
     @property
     def scheduled_appt_date(self):

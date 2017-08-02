@@ -2,7 +2,7 @@ from django.test import TestCase, tag
 from dateutil.relativedelta import TU, WE
 
 from edc_appointment.facility import Facility
-from edc_constants.constants import MALE, POS, NAIVE
+from edc_constants.constants import MALE, POS, NAIVE, ON_ART
 from edc_registration.models import RegisteredSubject
 
 from ..referral import Referral
@@ -107,3 +107,23 @@ class TestReferral(TestCase):
             referral_facilities=self.facilities,
             status_helper_cls=StatusHelper)
         self.assertTrue(referral.urgent_referral)
+
+    def test_referral_facility_no_referral_appt_datetime(self):
+        class StatusHelper:
+            def __init__(self, **kwargs):
+                self.final_hiv_status = POS
+                self.final_arv_status = ON_ART
+                self.newly_diagnosed = False
+                self.declined = False
+        subject_identifier = '111111'
+        RegisteredSubject.objects.create(
+            subject_identifier=subject_identifier,
+            gender=MALE)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        referral = Referral(
+            subject_visit=subject_visit,
+            referral_facilities=self.facilities,
+            status_helper_cls=StatusHelper)
+        self.assertIsNone(referral.referral_appt_datetime)
+        self.assertFalse(referral.urgent_referral)

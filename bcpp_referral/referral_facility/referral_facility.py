@@ -6,6 +6,10 @@ class ReferralFacilityError(Exception):
     pass
 
 
+class ReferralFacilityDateError(Exception):
+    pass
+
+
 class ReferralFacility:
 
     def __init__(self, name=None, days=None, facility=None, routine_codes=None, urgent_codes=None):
@@ -40,16 +44,17 @@ class ReferralFacility:
         report_datetime: date to use if urgent
         scheduled_appt_datetime: date to use if not urgent
         """
-        if self.is_urgent(referral_code=referral_code):
+        urgent_referral = self.is_urgent(referral_code=referral_code)
+        if urgent_referral:
             if not report_datetime:
-                raise ReferralFacilityError(
+                raise ReferralFacilityDateError(
                     'Report datetime not specified for urgent referral. Report '
                     'datetime is needed to calculate an urgent referral '
                     'appointment date. Got None.')
             dt = report_datetime
-        elif not self.is_urgent(referral_code=referral_code):
+        elif not urgent_referral:
             if not scheduled_appt_datetime:
-                raise ReferralFacilityError(
+                raise ReferralFacilityDateError(
                     'Scheduled appointment datetime not specified for routine appointment. '
                     'A scheduled appointment datetime is needed to calculate a routine '
                     'referral appointment date. Got None.')
