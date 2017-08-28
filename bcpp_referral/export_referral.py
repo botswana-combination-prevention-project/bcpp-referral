@@ -1,12 +1,26 @@
+from django.apps import apps as django_apps
 from django.db.models.aggregates import Max
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
-
-from .models import SubjectLocator
+from .data_getter import DataGetter
 
 
 class ExportReferral:
     # TODO: does not work, code was taken from the subject referral model
+
+    locator_model = 'bcpp_subject.subjectlocator'
+    data_getter_cls = DataGetter
+
+    def __init__(self, subject_visit=None):
+        self.data = {}
+        self.subject_visit = subject_visit
+        if self.ready_to_export_transaction:
+            self.data_getter = self.data_getter_cls(
+                subject_visit=subject_visit)
+            self.data = self.data_getter._data
+
+    def locator_model_cls(self):
+        return django_apps.get_model(self.locator_model)
 
     @property
     def ready_to_export_transaction(self):
@@ -29,25 +43,24 @@ class ExportReferral:
         try:
             # check if there is a subject locator.
             # Cannot export this referral without the Subject Locator.
-            subject_locator = SubjectLocator.objects.get(
-                **{'subject_visit__appointment__registered_subject':
-                   self.subject_visit.appointment.registered_subject})
+            subject_locator = self.locator_model_cls.objects.get(
+                subject_identifier=self.subject_visit.subject_identifier)
             # check if referral is complete
             if (self.referral_code and self.referral_appt_date
                     and self.referral_clinic_type):
                 try:
                     # export the subject locator
-                    SubjectLocator.export_history.export_transaction_model.objects.get(
-                        object_name=SubjectLocator._meta.object_name,
+                    self.locator_model_cls.export_history.export_transaction_model.objects.get(
+                        object_name=self.locator_model_cls._meta.object_name,
                         tx_pk=subject_locator.pk,
                         export_change_type='I')
-                    SubjectLocator.export_history.serialize_to_export_transaction(
+                    self.locator_model_cls.export_history.serialize_to_export_transaction(
                         subject_locator, 'U', 'default', force_export=True)
                 except ObjectDoesNotExist:
-                    SubjectLocator.export_history.serialize_to_export_transaction(
+                    self.locator_model_cls.export_history.serialize_to_export_transaction(
                         subject_locator, 'I', 'default', force_export=True)
                 except MultipleObjectsReturned:
-                    SubjectLocator.export_history.serialize_to_export_transaction(
+                    self.locator_model_cls.export_history.serialize_to_export_transaction(
                         subject_locator, 'U', 'default', force_export=True)
                 finally:
                     export_subject_referral = True
@@ -56,14 +69,14 @@ class ExportReferral:
                 # export tx receipient.
                 # is the last transaction not a D? if not, add one.
                 try:
-                    aggr = SubjectLocator.export_history.export_transaction_model.objects.filter(
+                    aggr = self.locator_model_cls.export_history.export_transaction_model.objects.filter(
                         pk=subject_locator.pk).aggregate(Max('timestamp'), )
-                    SubjectLocator.export_history.export_transaction_model.objects.get(
+                    self.locator_model_cls.export_history.export_transaction_model.objects.get(
                         timestamp=aggr.get('timestamp__max'),
                         export_change_type='D')
-                except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
-                    SubjectLocator.export_history.serialize_to_export_transaction(
+                except self.locator_model_cls.export_history.export_transaction_model.DoesNotExist:
+                    self.locator_model_cls.export_history.serialize_to_export_transaction(
                         subject_locator, 'D', None)
-        except SubjectLocator.DoesNotExist:
+        except ObjectDoesNotExist:
             pass
         return export_subject_referral
