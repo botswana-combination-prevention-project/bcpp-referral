@@ -31,6 +31,11 @@ class TestReferralCodeUntested(TestCase):
             ReferralCodeError,
             ReferralCode, final_arv_status='BLAH')
 
+    def test_referral_hivneg_female(self):
+        self.assertRaises(
+            ReferralCodeError,
+            ReferralCode, final_arv_status='NEG', gender=FEMALE)
+
     def test_referral_hivnone(self):
         code = ReferralCode(final_hiv_status=None, gender=FEMALE)
         self.assertEqual(code.referral_code, 'TST-HIV')
