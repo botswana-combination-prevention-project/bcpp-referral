@@ -1,5 +1,8 @@
+from .constants import PENDING, NOT_REFERRED
+
 REFERRAL_CODES = (
-    ('pending', '<data collection in progress>'),
+    (PENDING, '<data collection in progress>'),
+    (NOT_REFERRED, 'Not referred'),
     # ('TST-CD4', 'POS any, need CD4 testing'),    # not needed
     ('TST-HIV', 'HIV test'),
     ('TST-IND', 'Indeterminate result'),

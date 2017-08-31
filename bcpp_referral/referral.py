@@ -1,13 +1,10 @@
 from bcpp_status import StatusHelper
 
-from .referral_code import ReferralCode
 from .data_getter import DataGetter
-from arrow.arrow import Arrow
-from datetime import datetime
-
 from .data_getter import ReferralDataGetterError
+from .referral_code import ReferralCode
 from .referral_code import ReferralCodeError
-from .referral_facility import ReferralFacilityNotFound
+from .referral_facility import ReferralFacilityNotFound, ReferralFacilityDateError
 
 
 class Referral:
@@ -18,10 +15,13 @@ class Referral:
 
     def __init__(self, subject_visit=None, referral_facilities=None,
                  status_helper_cls=None):
-
+        self.facility = None
+        self.referral_appt_datetime = None
+        self.urgent_referral = None
+        self.scheduled_appt_datetime = None
+        self.subject_visit = subject_visit
         if status_helper_cls:
             self.status_helper_cls = status_helper_cls
-        self.subject_visit = subject_visit
         self.subject_identifier = subject_visit.subject_identifier
 
         data_getter = self.data_getter_cls(subject_visit=subject_visit)
@@ -53,24 +53,21 @@ class Referral:
         else:
             self.referral_code = referral_code_obj.referral_code
 
-        if data_getter.scheduled_appt_date:
-            dt = data_getter.scheduled_appt_date
-            self.scheduled_appt_datetime = Arrow.fromdatetime(
-                datetime(dt.year, dt.month, dt.day, 7, 30)).datetime
-        else:
-            self.scheduled_appt_datetime = None
+        self.scheduled_appt_datetime = data_getter.scheduled_appt_datetime
 
         try:
             self.facility = referral_facilities.get_facility(
                 referral_code=self.referral_code)
         except ReferralFacilityNotFound:
-            self.referral_appt_datetime = None
-            self.urgent_referral = None
+            pass
         else:
-            self.referral_appt_datetime = self.facility.available_datetime(
-                referral_code=self.referral_code,
-                report_datetime=data_getter.report_datetime,
-                scheduled_appt_datetime=self.scheduled_appt_datetime)
+            try:
+                self.referral_appt_datetime = self.facility.available_datetime(
+                    referral_code=self.referral_code,
+                    report_datetime=data_getter.report_datetime,
+                    scheduled_appt_datetime=self.scheduled_appt_datetime)
+            except ReferralFacilityDateError:
+                pass
             self.urgent_referral = self.facility.is_urgent(
                 referral_code=self.referral_code)
 

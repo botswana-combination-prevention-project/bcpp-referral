@@ -1,9 +1,14 @@
 from django.db import models
 
 from .choices import REFERRAL_CODES, REFERRAL_CLINIC_TYPES
+from .constants import PENDING, NOT_REFERRED
+from .bcpp_referral_facilities import bcpp_referral_facilities
+from .referral import Referral
 
 
 class SubjectReferralModelMixin(models.Model):
+
+    referral_cls = Referral
 
     referral_clinic = models.CharField(
         max_length=50,
@@ -237,7 +242,7 @@ class SubjectReferralModelMixin(models.Model):
         verbose_name='Referral Code',
         max_length=50,
         choices=REFERRAL_CODES,
-        default='pending',
+        default=PENDING,
         editable=False,
         help_text=("list of referral codes confirmed by "
                    "the edc, comma delimited if more than one (derived).")
@@ -259,6 +264,16 @@ class SubjectReferralModelMixin(models.Model):
         help_text=('The clinic type of clinic the participant is '
                    'referred to for services, (IDCC, VCT, ANC or SMC)')
     )
+
+    def save(self, *args, **kwargs):
+        self.referral_code = self.referral.referral_code or NOT_REFERRED
+        super().save(*args, **kwargs)
+
+    @property
+    def referral(self):
+        return self.referral_cls(
+            subject_visit=self.subject_visit,
+            referral_facilities=bcpp_referral_facilities)
 
     class Meta:
         abstract = True

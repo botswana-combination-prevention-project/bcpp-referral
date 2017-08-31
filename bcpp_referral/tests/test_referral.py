@@ -1,8 +1,8 @@
-from django.test import TestCase, tag
 from dateutil.relativedelta import TU, WE
-
+from django.test import TestCase, tag
 from edc_appointment.facility import Facility
-from edc_constants.constants import MALE, POS, NAIVE
+from edc_constants.constants import MALE, POS, NAIVE, ON_ART, NEG, UNK, FEMALE
+from edc_reference.models import Reference
 from edc_registration.models import RegisteredSubject
 
 from ..referral import Referral
@@ -30,25 +30,52 @@ class TestReferral(TestCase):
         self.facilities.add_facility(facility=referral_facility1)
         self.facilities.add_facility(facility=referral_facility2)
 
+    @tag('1')
     def test_referral(self):
+        options = [
+            (MALE, POS, None, None, None, 'POS#NVE'),
+            (MALE, POS, None, True, None, 'POS!NVE'),
+            (MALE, POS, NAIVE, True, False, 'POS!NVE'),
+            (MALE, POS, NAIVE, None, None, 'POS#NVE'),
+            (MALE, POS, ON_ART, False, False, 'MASA-CC'),
+            (MALE, NEG, None, None, False, 'SMC-NEG'),
+            (MALE, None, None, None, True, 'SMC-UNK'),
+            (MALE, None, None, None, None, 'SMC-UNK'),
+            (MALE, UNK, None, None, None, 'SMC-UNK'),
+            (FEMALE, POS, None, None, None, 'POS#NVE'),
+            (FEMALE, POS, None, True, None, 'POS!NVE'),
+            (FEMALE, POS, NAIVE, True, False, 'POS!NVE'),
+            (FEMALE, POS, NAIVE, None, None, 'POS#NVE'),
+            (FEMALE, POS, ON_ART, False, False, 'MASA-CC'),
+            (FEMALE, NEG, None, None, False, None),
+            (FEMALE, None, None, None, None, 'TST-HIV'),
+            (FEMALE, None, None, None, True, 'TST-HIV'),
+            (FEMALE, UNK, None, None, None, 'TST-HIV'),
+        ]
+        for gender, hiv, art, new, declined, code in options:
+            RegisteredSubject.objects.all().delete()
+            SubjectVisit.objects.all().delete()
+            Reference.objects.all().delete()
+            with self.subTest(gender=gender, hiv=hiv, art=art,
+                              new=new, declined=declined, code=code):
+                class StatusHelper:
+                    def __init__(self, **kwargs):
+                        self.final_hiv_status = hiv
+                        self.final_arv_status = art
+                        self.newly_diagnosed = new
+                        self.declined = declined
 
-        class StatusHelper:
-            def __init__(self, **kwargs):
-                self.final_hiv_status = POS
-                self.final_arv_status = NAIVE
-                self.newly_diagnosed = True
-                self.declined = False
-
-        subject_identifier = '111111'
-        RegisteredSubject.objects.create(
-            subject_identifier=subject_identifier,
-            gender=MALE)
-        subject_visit = SubjectVisit.objects.create(
-            subject_identifier=subject_identifier)
-        Referral(
-            subject_visit=subject_visit,
-            referral_facilities=self.facilities,
-            status_helper_cls=StatusHelper)
+                subject_identifier = '111111'
+                RegisteredSubject.objects.create(
+                    subject_identifier=subject_identifier,
+                    gender=gender)
+                subject_visit = SubjectVisit.objects.create(
+                    subject_identifier=subject_identifier)
+                referral = Referral(
+                    subject_visit=subject_visit,
+                    referral_facilities=self.facilities,
+                    status_helper_cls=StatusHelper)
+                self.assertEqual(referral.referral_code, code)
 
     def test_referral_facility(self):
         class StatusHelper:
@@ -107,3 +134,23 @@ class TestReferral(TestCase):
             referral_facilities=self.facilities,
             status_helper_cls=StatusHelper)
         self.assertTrue(referral.urgent_referral)
+
+    def test_referral_facility_no_referral_appt_datetime(self):
+        class StatusHelper:
+            def __init__(self, **kwargs):
+                self.final_hiv_status = POS
+                self.final_arv_status = ON_ART
+                self.newly_diagnosed = False
+                self.declined = False
+        subject_identifier = '111111'
+        RegisteredSubject.objects.create(
+            subject_identifier=subject_identifier,
+            gender=MALE)
+        subject_visit = SubjectVisit.objects.create(
+            subject_identifier=subject_identifier)
+        referral = Referral(
+            subject_visit=subject_visit,
+            referral_facilities=self.facilities,
+            status_helper_cls=StatusHelper)
+        self.assertIsNone(referral.referral_appt_datetime)
+        self.assertFalse(referral.urgent_referral)
