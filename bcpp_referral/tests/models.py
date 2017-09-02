@@ -1,9 +1,9 @@
 from django.db import models
-
 from edc_appointment.models import Appointment
 from edc_base.model_mixins.base_uuid_model import BaseUuidModel
-from edc_constants.choices import YES_NO
 from edc_base.utils import get_utcnow
+from edc_constants.choices import YES_NO
+from edc_constants.constants import YES
 from edc_reference.model_mixins import ReferenceModelMixin
 
 
@@ -67,6 +67,8 @@ class HivCareAdherence(ReferenceModelMixin, CrfModelMixin, BaseUuidModel):
     ever_taken_arv = models.CharField(max_length=25, null=True)
 
     on_arv = models.CharField(max_length=25, null=True)
+
+    medical_care = models.CharField(max_length=25, default=YES)
 
 
 class ReproductiveHealth(ReferenceModelMixin, CrfModelMixin, BaseUuidModel):

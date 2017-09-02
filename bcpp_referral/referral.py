@@ -25,7 +25,9 @@ class Referral:
         self.subject_identifier = subject_visit.subject_identifier
 
         data_getter = self.data_getter_cls(subject_visit=subject_visit)
-        status_helper = self.status_helper_cls(visit=subject_visit)
+        status_helper = self.status_helper_cls(
+            visit=subject_visit, update_history=True,
+            source_object_name=self.__class__.__name__)
 
         try:
             pregnant = data_getter.pregnant
