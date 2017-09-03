@@ -1,4 +1,4 @@
-from bcpp_status import StatusHelper
+from bcpp_status.status_db_helper import StatusDbHelper
 
 from .data_getter import DataGetter
 from .data_getter import ReferralDataGetterError
@@ -11,7 +11,7 @@ class Referral:
 
     referral_code_cls = ReferralCode
     data_getter_cls = DataGetter
-    status_helper_cls = StatusHelper
+    status_helper_cls = StatusDbHelper
 
     def __init__(self, subject_visit=None, referral_facilities=None,
                  status_helper_cls=None):
@@ -25,9 +25,7 @@ class Referral:
         self.subject_identifier = subject_visit.subject_identifier
 
         data_getter = self.data_getter_cls(subject_visit=subject_visit)
-        status_helper = self.status_helper_cls(
-            visit=subject_visit, update_history=True,
-            source_object_name=self.__class__.__name__)
+        status_helper = self.status_helper_cls(visit=subject_visit)
 
         try:
             pregnant = data_getter.pregnant
