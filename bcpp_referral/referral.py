@@ -1,4 +1,4 @@
-from bcpp_status import StatusHelper
+from bcpp_status.status_db_helper import StatusDbHelper
 
 from .data_getter import DataGetter
 from .data_getter import ReferralDataGetterError
@@ -11,7 +11,7 @@ class Referral:
 
     referral_code_cls = ReferralCode
     data_getter_cls = DataGetter
-    status_helper_cls = StatusHelper
+    status_helper_cls = StatusDbHelper
 
     def __init__(self, subject_visit=None, referral_facilities=None,
                  status_helper_cls=None):
