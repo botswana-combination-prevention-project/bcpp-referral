@@ -1,5 +1,5 @@
 from dateutil.relativedelta import MO, TU, WE, TH, FR
-from edc_appointment.facility import Facility
+from edc_facility import Facility
 
 
 class ReferralFacilityError(Exception):
